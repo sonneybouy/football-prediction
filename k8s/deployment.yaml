@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
       - name: football-prediction
-        image: football-prediction:latest
+        image: ghcr.io/sonneybouy/football-prediction:latest
         imagePullPolicy: Always
         ports:
         - containerPort: 8000

@@ -8,7 +8,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: ${{ github.repository_owner }}/football-prediction
 
 jobs:
   test:
@@ -89,6 +89,19 @@ jobs:
       run: |
         mkdir -p $HOME/.kube
         echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > $HOME/.kube/config
+        
+    - name: Setup namespace and secrets
+      run: |
+        # Create namespace if it doesn't exist
+        kubectl apply -f k8s/namespace.yaml
+        
+        # Create secrets if they don't exist
+        kubectl create secret generic football-prediction-secrets \
+          --from-literal=FOOTBALL_API_KEY="${{ secrets.FOOTBALL_API_KEY }}" \
+          --from-literal=DATABASE_URL="" \
+          --from-literal=REDIS_URL="" \
+          -n football-prediction \
+          --dry-run=client -o yaml | kubectl apply -f -
         
     - name: Update deployment image
       run: |
