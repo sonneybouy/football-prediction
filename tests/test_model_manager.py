@@ -39,6 +39,8 @@ def test_football_model_prediction():
 def test_model_performance_tracking():
     """Test model performance metrics are tracked"""
     manager = ModelManager()
+    # Ensure model is loaded first
+    model = manager.get_current_model()
     performance = manager.get_model_performance()
     
     assert isinstance(performance, dict)

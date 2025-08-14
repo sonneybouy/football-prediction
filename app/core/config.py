@@ -2,6 +2,8 @@ from pydantic_settings import BaseSettings
 from typing import Optional
 
 class Settings(BaseSettings):
+    model_config = {"protected_namespaces": ("settings_",)}
+    
     app_name: str = "Football Prediction Service"
     debug: bool = False
     

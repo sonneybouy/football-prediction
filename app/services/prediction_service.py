@@ -78,7 +78,10 @@ class PredictionService:
         # Handle both scalar and array predictions
         if prediction.ndim == 0 or len(prediction.shape) == 1:
             # Scalar prediction - split it into home/away scores
-            total_goals = max(0, float(prediction) if hasattr(prediction, '__float__') else prediction[0])
+            if prediction.ndim == 0:
+                total_goals = max(0, float(prediction.item()))
+            else:
+                total_goals = max(0, float(prediction[0]))
             home_score = total_goals * 0.6  # Home advantage
             away_score = total_goals * 0.4
         else:
