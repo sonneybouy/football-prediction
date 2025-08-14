@@ -1,0 +1,17 @@
+# Minimal development requirements
+fastapi
+uvicorn
+requests
+aiohttp
+python-dotenv
+pydantic
+pydantic-settings
+aiofiles
+jinja2
+python-multipart
+
+# Optional: Add these later if needed
+ pandas
+ numpy  
+ scikit-learn
+ xgboost

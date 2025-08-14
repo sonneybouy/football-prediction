@@ -1,0 +1,91 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: football-prediction-app
+  namespace: football-prediction
+  labels:
+    app: football-prediction
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: football-prediction
+  template:
+    metadata:
+      labels:
+        app: football-prediction
+    spec:
+      containers:
+      - name: football-prediction
+        image: football-prediction:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8000
+        env:
+        - name: APP_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: football-prediction-config
+              key: APP_NAME
+        - name: DEBUG
+          valueFrom:
+            configMapKeyRef:
+              name: football-prediction-config
+              key: DEBUG
+        - name: FOOTBALL_API_URL
+          valueFrom:
+            configMapKeyRef:
+              name: football-prediction-config
+              key: FOOTBALL_API_URL
+        - name: MODEL_PATH
+          valueFrom:
+            configMapKeyRef:
+              name: football-prediction-config
+              key: MODEL_PATH
+        - name: RETRAIN_INTERVAL_HOURS
+          valueFrom:
+            configMapKeyRef:
+              name: football-prediction-config
+              key: RETRAIN_INTERVAL_HOURS
+        - name: FOOTBALL_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: football-prediction-secrets
+              key: FOOTBALL_API_KEY
+        - name: DATABASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: football-prediction-secrets
+              key: DATABASE_URL
+        - name: REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: football-prediction-secrets
+              key: REDIS_URL
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "100m"
+          limits:
+            memory: "256Mi"
+            cpu: "300m"
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 30
+          periodSeconds: 10
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 8000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+        volumeMounts:
+        - name: models-volume
+          mountPath: /app/models
+      volumes:
+      - name: models-volume
+        persistentVolumeClaim:
+          claimName: football-prediction-models-pvc
+      restartPolicy: Always

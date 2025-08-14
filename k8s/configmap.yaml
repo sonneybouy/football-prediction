@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: football-prediction-config
+  namespace: football-prediction
+data:
+  APP_NAME: "Football Prediction Service"
+  DEBUG: "false"
+  FOOTBALL_API_URL: "https://api.football-data.org/v4"
+  MODEL_PATH: "/app/models/"
+  RETRAIN_INTERVAL_HOURS: "24"

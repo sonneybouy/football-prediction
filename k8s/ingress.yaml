@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: football-prediction-ingress
+  namespace: football-prediction
+  annotations:
+    kubernetes.io/ingress.class: "traefik"
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
+spec:
+  tls:
+  - hosts:
+    - football.sonneypatel.com
+    secretName: football-prediction-tls
+  rules:
+  - host: football.sonneypatel.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: football-prediction-service
+            port:
+              number: 80

@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: football-prediction-service
+  namespace: football-prediction
+  labels:
+    app: football-prediction
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 8000
+    protocol: TCP
+    name: http
+  selector:
+    app: football-prediction
