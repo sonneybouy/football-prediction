@@ -24,8 +24,7 @@ class FootballPredictor {
 
     setDefaultDate() {
         const now = new Date();
-        now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-        document.getElementById('matchDate').value = now.toISOString().slice(0, 16);
+        document.getElementById('matchDate').value = now.toISOString().slice(0, 10);
     }
 
     updateTeamOptions() {
@@ -47,6 +46,7 @@ class FootballPredictor {
 
     async handlePrediction(e) {
         e.preventDefault();
+        console.log('Form submitted!');
         
         const submitBtn = e.target.querySelector('button[type="submit"]');
         const spinner = document.getElementById('loadingSpinner');
@@ -57,14 +57,18 @@ class FootballPredictor {
         spinner.classList.remove('d-none');
         resultsCard.classList.add('d-none');
         
+        const requestData = {
+            home_team: document.getElementById('homeTeam').value,
+            away_team: document.getElementById('awayTeam').value,
+            match_date: document.getElementById('matchDate').value + 'T15:00:00',
+            league: document.getElementById('league').value || null
+        };
+        
+        console.log('Request data:', requestData);
+        
         try {
-            const formData = new FormData(e.target);
-            const prediction = await this.makePrediction({
-                home_team: document.getElementById('homeTeam').value,
-                away_team: document.getElementById('awayTeam').value,
-                match_date: document.getElementById('matchDate').value,
-                league: document.getElementById('league').value || null
-            });
+            const prediction = await this.makePrediction(requestData);
+            console.log('Prediction received:', prediction);
             
             this.displayResults(prediction);
             this.addToRecentPredictions(prediction);
@@ -80,6 +84,9 @@ class FootballPredictor {
     }
 
     async makePrediction(data) {
+        console.log('Making API call to:', `${this.apiBaseUrl}/predict`);
+        console.log('Request payload:', JSON.stringify(data));
+        
         const response = await fetch(`${this.apiBaseUrl}/predict`, {
             method: 'POST',
             headers: {
@@ -88,11 +95,18 @@ class FootballPredictor {
             body: JSON.stringify(data)
         });
         
+        console.log('Response status:', response.status);
+        console.log('Response ok:', response.ok);
+        
         if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
+            const errorText = await response.text();
+            console.error('Response error:', errorText);
+            throw new Error(`HTTP error! status: ${response.status} - ${errorText}`);
         }
         
-        return await response.json();
+        const result = await response.json();
+        console.log('Response data:', result);
+        return result;
     }
 
     displayResults(prediction) {
