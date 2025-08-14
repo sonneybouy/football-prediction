@@ -12,14 +12,28 @@ class FootballPredictor {
 
     bindEvents() {
         const form = document.getElementById('predictionForm');
-        form.addEventListener('submit', (e) => this.handlePrediction(e));
+        if (!form) {
+            console.error('predictionForm not found!');
+            return;
+        }
+        
+        console.log('Binding form submit event...');
+        form.addEventListener('submit', (e) => {
+            console.log('Form submit event triggered!');
+            this.handlePrediction(e);
+        });
         
         // Prevent selecting same team for home and away
         const homeSelect = document.getElementById('homeTeam');
         const awaySelect = document.getElementById('awayTeam');
         
-        homeSelect.addEventListener('change', () => this.updateTeamOptions());
-        awaySelect.addEventListener('change', () => this.updateTeamOptions());
+        if (homeSelect && awaySelect) {
+            homeSelect.addEventListener('change', () => this.updateTeamOptions());
+            awaySelect.addEventListener('change', () => this.updateTeamOptions());
+            console.log('Team selection events bound');
+        } else {
+            console.error('Team select elements not found!');
+        }
     }
 
     setDefaultDate() {
@@ -211,5 +225,12 @@ class FootballPredictor {
 
 // Initialize when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new FootballPredictor();
+    console.log('DOM loaded, initializing FootballPredictor...');
+    try {
+        const predictor = new FootballPredictor();
+        console.log('FootballPredictor initialized successfully');
+        window.footballPredictor = predictor; // Make it globally accessible for debugging
+    } catch (error) {
+        console.error('Failed to initialize FootballPredictor:', error);
+    }
 });
