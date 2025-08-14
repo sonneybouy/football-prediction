@@ -2,7 +2,10 @@ from pydantic_settings import BaseSettings
 from typing import Optional
 
 class Settings(BaseSettings):
-    model_config = {"protected_namespaces": ("settings_",)}
+    model_config = {
+        "protected_namespaces": ("settings_",),
+        "env_file": ".env"
+    }
     
     app_name: str = "Football Prediction Service"
     debug: bool = False
@@ -20,8 +23,5 @@ class Settings(BaseSettings):
     # ML Model settings
     model_path: str = "models/"
     retrain_interval_hours: int = 24
-    
-    class Config:
-        env_file = ".env"
 
 settings = Settings()
