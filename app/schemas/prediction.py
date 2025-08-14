@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from datetime import datetime
 from typing import Optional, Dict
 
@@ -9,6 +9,8 @@ class PredictionRequest(BaseModel):
     league: Optional[str] = None
 
 class PredictionResponse(BaseModel):
+    model_config = ConfigDict(protected_namespaces=())
+    
     home_team: str
     away_team: str
     predicted_score_home: float
