@@ -10,8 +10,14 @@ aiofiles
 jinja2
 python-multipart
 
-# Optional: Add these later if needed
- pandas
- numpy  
- scikit-learn
- xgboost
+# ML packages
+pandas
+numpy  
+scikit-learn
+xgboost
+
+# Testing packages
+pytest
+pytest-asyncio
+pytest-cov
+httpx
