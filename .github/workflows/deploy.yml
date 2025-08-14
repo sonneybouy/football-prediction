@@ -88,14 +88,18 @@ jobs:
     - name: Configure kubectl
       run: |
         mkdir -p $HOME/.kube
-        echo "${{ secrets.KUBE_CONFIG }}" | base64 --decode > $HOME/.kube/config
+        echo "${{ secrets.KUBE_CONFIG }}" | base64 -d > $HOME/.kube/config
+        chmod 600 $HOME/.kube/config
         
     - name: Setup namespace and secrets
       run: |
+        # Test kubectl connection
+        kubectl cluster-info
+        
         # Create namespace if it doesn't exist
         kubectl apply -f k8s/namespace.yaml
         
-        # Create secrets if they don't exist
+        # Create secrets if they don't exist (using replace to handle existing secrets)
         kubectl create secret generic football-prediction-secrets \
           --from-literal=FOOTBALL_API_KEY="${{ secrets.FOOTBALL_API_KEY }}" \
           --from-literal=DATABASE_URL="" \
